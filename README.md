@@ -17,6 +17,8 @@ decision questions with a probability for each option. It includes a calibrated 
 `garum_head.py`): garum's probabilities are the head's output, computed from the adapted model's hidden state and option-letter
 logits at the answer position. The letter logits on their own are not garum's answer, so load it through the code below.
 
+The weights (`adapter_model.safetensors` and `vbll_head.safetensors`) are hosted on the Hugging Face Hub at https://huggingface.co/plantwaterer/garum; the GitHub mirror holds the code, with Git LFS pointers in place of the weight files.
+
 ## Usage
 
 ```python
