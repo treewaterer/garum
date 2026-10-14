@@ -92,24 +92,27 @@ peft 0.21.2. Attention is the transformers default (SDPA).
 
 ## Evaluation
 
-**Decision Index 0.3, public panel (37 benchmarks).** Measured by us on the kit's public suite (edition 0.3, kit commit 9eb2dbe2,
-scored with the kit's own scorer), with our own scoring pipeline rather than the kit's runner and this engine. That pipeline used
-the same weights, head and prompt format. It differs from the engine in a few ways:
-- a choice question's option order was drawn from a seeded generator, not from a hash of the request;
-- for questions with more than 52 options, the first-round split of the options was seeded by the kit's request id;
-- yes / no definitions were not shown;
-- prompts were batched across each benchmark, not within a request;
-- 319 prompts longer than 32,768 tokens (MMLU-Pro 304, iSarcasmEval 15) were scored with the state cut to fit. The engine reports such
-  requests as unsupported.
-
-The 19 test items listed below are counted as wrong. This is our own measurement, not a leaderboard entry.
+**Decision Index 0.3, public panel (37 benchmarks).** The run used this repository's engine, adapter and head, with the kit's
+runner and scorer at commit 9eb2dbe2, in bf16. The full public suite ran as 8 row shards on single GPUs (3 x H100 80GB, 5 x RTX
+PRO 6000), merged without changes, followed by one resume pass of the kit runner that ran 0 rows. This is our own run of the
+public kit, not a leaderboard entry. The run files are at
+[plantwaterer/garum-decision-index](https://huggingface.co/datasets/plantwaterer/garum-decision-index).
 
 | | public index | knowledge | language | retrieval | tools | arts |
 |---|---|---|---|---|---|---|
-| garum | 58.29 | 45.01 | 61.55 | 62.88 | 75.30 | 43.92 |
-| [garas](https://huggingface.co/plantwaterer/garas), same pipeline | 56.68 | 43.67 | 58.62 | 61.48 | 74.26 | 43.58 |
+| board rule (the 19 test items listed below counted as wrong) | 58.34 | 44.81 | 61.79 | 63.19 | 75.04 | 44.16 |
+| as scored | 58.36 | 44.81 | 61.79 | 63.29 | 75.04 | 44.16 |
+| [garas](https://huggingface.co/plantwaterer/garas), board rule, same procedure | 56.57 | 43.29 | 58.70 | 61.75 | 73.76 | 43.56 |
 
-garas's own card reports 56.57 from a full run of its engine through the kit's runner; the procedures differ as listed above.
+140,178 requests were scored after the official exclusions. 309 do not fit 32,768 tokens (MMLU-Pro 304, iSarcasmEval 5); they
+are reported as unsupported and count as wrong. Nothing was truncated.
+
+**Latency** was measured on 1 x RTX PRO 6000, one request at a time, on our own 760-row sample of the public suite (750 timed rows).
+This is an approximation of the board's latency check, which uses a private sample:
+
+| median | mean | 80th percentile |
+|---|---|---|
+| 115 ms | 492 ms | 424 ms |
 
 ### Overlap with evaluation data
 
