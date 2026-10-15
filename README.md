@@ -94,7 +94,9 @@ peft 0.21.2. Attention is the transformers default (SDPA).
 
 **Decision Index 0.3, public panel (37 benchmarks).** The run used this repository's engine, adapter and head, with the kit's
 runner and scorer at commit 9eb2dbe2, in bf16. The full public suite ran as 8 row shards on single GPUs (3 x H100 80GB, 5 x RTX
-PRO 6000), merged without changes, followed by one resume pass of the kit runner that ran 0 rows. This is our own run of the
+PRO 6000), merged without changes, followed by one resume pass of the kit runner that ran 0 rows. bf16 results differ slightly
+between the two GPU types: for Garas, re-scoring its RTX shards on H100 flipped 0.85% of 120,556 scored decisions and left the
+index unchanged at the kit's 0.01 precision; we have not repeated that check for garum. This is our own run of the
 public kit, not a leaderboard entry. The run files are at
 [plantwaterer/garum-decision-index](https://huggingface.co/datasets/plantwaterer/garum-decision-index).
 
