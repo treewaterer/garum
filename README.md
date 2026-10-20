@@ -106,8 +106,14 @@ public kit, not a leaderboard entry. The run files are at
 | as scored | 58.36 | 44.81 | 61.79 | 63.29 | 75.04 | 44.16 |
 | [garas](https://huggingface.co/plantwaterer/garas), board rule, same procedure | 56.57 | 43.29 | 58.70 | 61.75 | 73.76 | 43.56 |
 
-140,178 requests were scored after the official exclusions. 309 do not fit 32,768 tokens (MMLU-Pro 304, iSarcasmEval 5); they
-are reported as unsupported and count as wrong. Nothing was truncated.
+140,178 requests were scored after the official exclusions. 309 of them (MMLU-Pro 304, iSarcasmEval 5) were reported as
+unsupported and count as wrong. Nothing was truncated.
+
+**Correction (2026-10-20):** an earlier version of this card said those 309 requests do not fit 32,768 tokens. They are short.
+The engine refused every request whose state starts with whitespace: the chat template trims the user message, so the raw
+state was no longer found in the prompt, and the refusal was mislabelled as a context-length error. The engine now compares the
+stripped state, so those requests are answered. Prompts and answers for every other request are unchanged. The kit-run results
+above were produced before the fix.
 
 **Latency** was measured on 1 x RTX PRO 6000, one request at a time, on our own 760-row sample of the public suite (750 timed rows).
 This is an approximation of the board's latency check, which uses a private sample:

@@ -271,9 +271,14 @@ class GarumForDecision(torch.nn.Module):
     def _prompt(self, u, qid, max_len):
         order = option_order(u["qtype"], len(u["option_keys"]), question_seed(u["state"], qid.split("|", 1)[1], u["option_keys"]))
         text = core.build_prompt(self.tokenizer, u, order, max_len, chat=self.chat, noul_defs=self.config.noul_defs)
-        if text is None or u["state"] not in text:
+        if text is None:
             raise Unsupported(f"maximum context length: question {qid.split('|', 1)[1]!r} does not fit {max_len} tokens "
                               f"without cutting the state (no truncation)")
+        if u["state"].strip() not in text:
+            # The chat template trims the user message, so a state's leading whitespace never reaches the prompt: compare the
+            # stripped state. Before 2026-10-20 the raw state was compared, so every state starting with whitespace was refused
+            # here as "maximum context length" (Decision Index 0.3 public: MMLU-Pro 304 + iSarcasmEval 5 rows).
+            raise Unsupported(f"the prompt for question {qid.split('|', 1)[1]!r} does not contain the full state")
         return order, text
 
     def _encoded(self, qid, u, order, text):
